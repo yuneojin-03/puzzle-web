@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>단계별 숫자 규칙 게임</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: white;
+            /*box-shadow: 5px 5px 15px rgba(0,0,0,0.1);*/
+        }
+
+        td {
+            width: 50px;
+            height: 40px;
+            border: 1px solid #ddd;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .active-row td {
+            background-color: #e91e63;
+            color: white;
+            /*border-color: #c2185b;*/
+        }
+
+        input {
+            width: 40px;
+            height: 30px;
+            text-align: center;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 20px;
+            height: 30px; 
+        }
+    </style>
+</head>
+<body>
+
+    <h2>단계별 숫자 규칙 찾기</h2>
+    <p>분홍색 줄의 정답을 맞히면 다음 단계로 넘어갑니다!</p>
+
+    <table>
+        <tr id="row1" class="active-row">
+            <td>1</td> <td>2</td> <td>3</td> <td>4</td>
+            <td><input type="text" id="q1"></td> 
+            <td>6</td> <td>7</td> <td>8</td> <td>9</td> <td>10</td>
+        </tr>
+
+        <tr id="row2">
+            <td>10</td> <td>20</td> <td>30</td> <td>40</td>
+            <td><input type="text" id="q2" disabled></td>
+            <td>60</td> <td>70</td> <td>80</td> <td>90</td> <td>100</td>
+        </tr>
+
+        <tr id="row3">
+            <td>5</td> <td>10</td> <td>15</td> <td>20</td>
+            <td><input type="text" id="q3" disabled></td>
+            <td>30</td> <td>35</td> <td>40</td> <td>45</td> <td>50</td>
+        </tr>
+
+        <tr id="row4">
+            <td>2</td> <td>4</td> <td>6</td> <td>8</td>
+            <td><input type="text" id="q4" disabled></td>
+            <td>12</td> <td>14</td> <td>16</td> <td>18</td> <td>20</td>
+        </tr>
+
+        <tr id="row5">
+            <td>3</td> <td>6</td> <td>9</td> <td>12</td>
+            <td><input type="text" id="q5" disabled></td>
+            <td>18</td> <td>21</td> <td>24</td> <td>27</td> <td>30</td>
+        </tr>
+        
+        <tr id="row6">
+            <td>11</td> <td>21</td> <td>31</td> 
+            <td><input type="text" id="q6" disabled></td>
+            <td>51</td> <td>61</td> <td>71</td> <td>81</td> <td>91</td> <td>101</td>
+        </tr>
+    </table>
+
+    <button onclick="checkCurrentStep()">확인하기</button>
+    <div id="result"></div>
+
+    <script>
+        var Level = 1;
+
+        function checkCurrentStep() {
+            var inputId = "q" + Level; 
+            var rowId = "row" + Level; 
+            
+            var userAnswer = document.getElementById(inputId).value;
+            var resultBox = document.getElementById('result');
+
+            if (userAnswer == "") {
+                resultBox.innerText = "빈칸을 채워주세요!";
+                resultBox.style.color = "orange";
+                return;
+            }
+
+            var correctAnswer;
+            if (Level == 1) correctAnswer = "5";
+            else if (Level == 2) correctAnswer = "50";
+            else if (Level == 3) correctAnswer = "25";
+            else if (Level == 4) correctAnswer = "10";
+            else if (Level == 5) correctAnswer = "15";
+            else if (Level == 6) correctAnswer = "41";
+
+            if (userAnswer == correctAnswer) {
+                resultBox.innerText = "정답입니다! 다음 단계로 넘어갑니다.";
+                resultBox.style.color = "skyblue";
+
+                document.getElementById(rowId).classList.remove("active-row");
+                document.getElementById(rowId).classList.add("finished-row");
+                
+                document.getElementById(inputId).disabled = true;
+
+                Level = Level + 1;
+
+                if (Level > 6) {
+                    resultBox.innerText = "축하합니다! 모든 문제를 다 풀었습니다! ";
+                    resultBox.style.color = "blue";
+                    return;
+                }
+
+                var nextRowId = "row" + Level;
+                var nextInputId = "q" + Level;
+
+                document.getElementById(nextRowId).classList.add("active-row");
+                
+                document.getElementById(nextInputId).disabled = false;
+                document.getElementById(nextInputId).focus();
+
+            } else {
+                resultBox.innerText = "틀렸습니다. 다시 생각해보세요!";
+                resultBox.style.color = "red";
+                document.getElementById(inputId).value = "";
+                document.getElementById(inputId).focus();
+            }
+        }
+    </script>
+</body>
+</html>
