@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>단계별 숫자 규칙 게임</title>
+    <style>
+        body {
+            font-family: '맑은 고딕', sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden; /* 둥근 모서리 적용 */
+        }
+
+        td {
+            width: 50px;
+            height: 40px;
+            border: 1px solid #ddd;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* 활성화된 줄 (현재 풀고 있는 줄) 스타일 - 분홍색 */
+        .active-row td {
+            background-color: #e91e63;
+            color: white;
+            border-color: #c2185b;
+        }
+
+        /* 완료된 줄 스타일 - 회색으로 변경 (선택사항) */
+        .finished-row td {
+            background-color: #eee;
+            color: #aaa;
+        }
+
+        input {
+            width: 40px;
+            height: 30px;
+            text-align: center;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* 비활성화된 입력창 (잠김) */
+        input:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 20px;
+            height: 30px; /* 글자가 없어도 공간 차지 */
+        }
+    </style>
+</head>
+<body>
+
+    <h2>단계별 숫자 규칙 찾기</h2>
+    <p>분홍색 줄의 정답을 맞히면 다음 단계로 넘어갑니다!</p>
+
+    <table>
+        <tr id="row1" class="active-row">
+            <td>1</td> <td>2</td> <td>3</td> <td>4</td>
+            <td><input type="text" id="q1"></td> 
+            <td>6</td> <td>7</td> <td>8</td> <td>9</td> <td>10</td>
+        </tr>
+
+        <tr id="row2">
+            <td>10</td> <td>20</td> <td>30</td> <td>40</td>
+            <td><input type="text" id="q2" disabled></td>
+            <td>60</td> <td>70</td> <td>80</td> <td>90</td> <td>100</td>
+        </tr>
+
+        <tr id="row3">
+            <td>5</td> <td>10</td> <td>15</td> <td>20</td>
+            <td><input type="text" id="q3" disabled></td>
+            <td>30</td> <td>35</td> <td>40</td> <td>45</td> <td>50</td>
+        </tr>
+
+        <tr id="row4">
+            <td>2</td> <td>4</td> <td>6</td> <td>8</td>
+            <td><input type="text" id="q4" disabled></td>
+            <td>12</td> <td>14</td> <td>16</td> <td>18</td> <td>20</td>
+        </tr>
+
+        <tr id="row5">
+            <td>3</td> <td>6</td> <td>9</td> <td>12</td>
+            <td><input type="text" id="q5" disabled></td>
+            <td>18</td> <td>21</td> <td>24</td> <td>27</td> <td>30</td>
+        </tr>
+        
+        <tr id="row6">
+            <td>11</td> <td>21</td> <td>31</td> 
+            <td><input type="text" id="q6" disabled></td>
+            <td>51</td> <td>61</td> <td>71</td> <td>81</td> <td>91</td> <td>101</td>
+        </tr>
+    </table>
+
+    <button onclick="checkCurrentStep()">확인하기</button>
+    <div id="result"></div>
+
+    <script>
+        // 현재 몇 번째 단계를 풀고 있는지 저장하는 변수 (1부터 시작)
+        var currentLevel = 1;
+
+        function checkCurrentStep() {
+            var inputId = "q" + currentLevel; // 예: q1, q2...
+            var rowId = "row" + currentLevel; // 예: row1, row2...
+            
+            // 현재 입력한 값 가져오기
+            var userAnswer = document.getElementById(inputId).value;
+            var resultBox = document.getElementById('result');
+
+            // 1. 빈칸 검사
+            if (userAnswer == "") {
+                resultBox.innerText = "빈칸을 채워주세요!";
+                resultBox.style.color = "orange";
+                return;
+            }
+
+            // 2. 각 단계별 정답 설정
+            var correctAnswer;
+            if (currentLevel == 1) correctAnswer = "5";
+            else if (currentLevel == 2) correctAnswer = "50";
+            else if (currentLevel == 3) correctAnswer = "25";
+            else if (currentLevel == 4) correctAnswer = "10";
+            else if (currentLevel == 5) correctAnswer = "15";
+            else if (currentLevel == 6) correctAnswer = "41";
+
+            // 3. 정답 확인 로직
+            if (userAnswer == correctAnswer) {
+                // 정답일 경우!
+                resultBox.innerText = "정답입니다! 다음 단계로 넘어갑니다.";
+                resultBox.style.color = "blue";
+
+                // 현재 줄에서 분홍색 빼기 (완료 표시)
+                document.getElementById(rowId).classList.remove("active-row");
+                document.getElementById(rowId).classList.add("finished-row");
+                
+                // 현재 입력창 잠그기
+                document.getElementById(inputId).disabled = true;
+
+                // 다음 단계로 레벨 올리기
+                currentLevel = currentLevel + 1;
+
+                // 마지막 단계(7단계)가 되면 게임 끝!
+                if (currentLevel > 6) {
+                    resultBox.innerText = "축하합니다! 모든 문제를 다 풀었습니다! ";
+                    resultBox.style.color = "blue";
+                    return;
+                }
+
+                // 다음 단계 준비
+                var nextRowId = "row" + currentLevel;
+                var nextInputId = "q" + currentLevel;
+
+                // 다음 줄을 분홍색으로 만들기
+                document.getElementById(nextRowId).classList.add("active-row");
+                
+                // 다음 입력창 잠금 풀고, 커서 깜빡이게 하기
+                document.getElementById(nextInputId).disabled = false;
+                document.getElementById(nextInputId).focus();
+
+            } else {
+                // 틀렸을 경우
+                resultBox.innerText = "틀렸습니다. 다시 생각해보세요!";
+                resultBox.style.color = "red";
+                // 입력창 비우고 다시 커서 두기
+                document.getElementById(inputId).value = "";
+                document.getElementById(inputId).focus();
+            }
+        }
+    </script>
+</body>
+</html>
